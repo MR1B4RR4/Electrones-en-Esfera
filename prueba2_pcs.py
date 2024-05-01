@@ -30,6 +30,9 @@ from mi_pcs    import mi_pcs_local_2
 x0 = np.random.rand(3)
 
 (x,y)=mi_pcs_local(f, h, x0)
+print((x,y))
 
 print("-------------------------------")
 (x,y)=mi_pcs_local_2(f, h, x0)
+print((x,y))
+
