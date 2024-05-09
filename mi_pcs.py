@@ -201,8 +201,8 @@ def mi_pcs_local_2(fun, h, x):
           #-----------------------------------------------------------
           
 
-def line_search_wolfe(f, x, p, g, c1=1e-4, c2=0.9, max_line_search=50):
-    alpha = 0.01
+def line_search_wolfe(f, x, p, g, c1=1e-4, c2=0.9, max_line_search=100):
+    alpha = 1e-4
     alpha_min, alpha_max = 0, np.inf
 
     for _ in range(max_line_search):
@@ -227,8 +227,8 @@ def line_search_wolfe(f, x, p, g, c1=1e-4, c2=0.9, max_line_search=50):
 
 
 def mi_pcs_local_3(fun, h, x):
-    tol = 1e-5
-    maxiter = 50
+    tol = 1e-6
+    maxiter = 100
     iter = 0
     n = len(x)
     h_x = h(x)
