@@ -201,6 +201,31 @@ def mi_pcs_local_2(fun, h, x):
           #-----------------------------------------------------------
           
 
+def line_search_wolfe(f, x, p, g, c1=1e-4, c2=0.9, max_line_search=100):
+    alpha = 0.5
+    alpha_min, alpha_max = 0, np.inf
+
+    for _ in range(max_line_search):
+        x_new = x + alpha * p
+        f_new = f(x_new)
+        # Condición de Armijo
+        if f_new > f(x) + c1 * alpha * np.dot(g, p):
+            alpha_max = alpha
+            alpha = (alpha_min + alpha_max) / 2
+            continue
+        # Condición de curvatura de Wolfe
+        g_new = gradiente(f, x_new)
+        if np.dot(g_new, p) < c2 * np.dot(g, p):
+            alpha_min = alpha
+            if alpha_max == np.inf:
+                alpha = 2 * alpha_min
+            else:
+                alpha = (alpha_min + alpha_max) / 2
+            continue
+        return alpha, True
+    return None, False  # Retorna None si no se encuentra un alpha adecuado
+
+
 def mi_pcs_local_3(fun, h, x):
     tol = 1e-5
     maxiter = 100
@@ -233,12 +258,11 @@ def mi_pcs_local_3(fun, h, x):
         d_x = w[:n]
         d_y = w[n:n+m]
 
-        # Búsqueda de línea
-        alpha = 1.0
-        c = 1e-4
-        rho = 0.5
-        while fun(x + alpha * d_x) > fun(x) + c * alpha * np.dot(grad_x, d_x):
-            alpha *= rho
+        # Búsqueda de línea con condiciones de Wolfe
+        alpha, ok = line_search_wolfe(fun, x, d_x, grad_x, c1=1e-2, c2=0.85)
+        if not ok:
+            print("Búsqueda de línea fallida. Ajustando alfa manualmente.")
+            alpha = 0.001  # Ajuste manual si la búsqueda de línea falla
 
         # Actualizaciones de x y y
         x += alpha * d_x
@@ -268,7 +292,3 @@ def mi_pcs_local_3(fun, h, x):
             break
 
     return x, y
-    
-    
-    
-    
