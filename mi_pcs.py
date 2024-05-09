@@ -6,6 +6,10 @@ Created on Wed Apr 10 11:41:15 2024
          Optimización Numérica
          ITAM
 """
+import numpy as np
+from derivadas import gradiente
+from derivadas import mi_jacobiana
+from derivadas import matriz_rango1
 
 def mi_pcs_local(fun, h, x):
     # Programación Cuadrática Sucesiva Local con actualización de
@@ -24,11 +28,7 @@ def mi_pcs_local(fun, h, x):
     #   ITAM
     # 17 de abril de 2024
     #----------------------------------------------
-    import numpy as np
-    from derivadas import gradiente
-    from derivadas import mi_jacobiana
-    from derivadas import matriz_rango1
-    
+        
     tol = 10**(-5)
     maxiter = 10
     iter = 0
@@ -100,14 +100,7 @@ def mi_pcs_local(fun, h, x):
             return x,y
         
         #-----------------------------------------------------------
-        
-    
-           
-        
-        
-        
-        
-        
+                
 def mi_pcs_local_2(fun, h, x):
       # Programación Cuadrática Sucesiva Local con actualización de
       # Powell para el problema
@@ -207,9 +200,74 @@ def mi_pcs_local_2(fun, h, x):
           
           #-----------------------------------------------------------
           
-            
-        
+
+def mi_pcs_local_3(fun, h, x):
+    tol = 1e-5
+    maxiter = 100
+    iter = 0
+    n = len(x)
+    h_x = h(x)
+    m = len(h_x)
+    grad_x = gradiente(fun, x)
+    J_x = mi_jacobiana(h, x)
+    y = np.zeros(m)
+    B = np.identity(n)
+    M = np.zeros((n+m, n+m))
     
+    cnpo1 = grad_x + np.dot(J_x.T, y)
+    cnpo = np.concatenate((cnpo1, h_x), 0)
+    cnpo_norma = np.linalg.norm(cnpo)
+
+    while cnpo_norma > tol and iter < maxiter:
+        iter += 1
+        # Matriz del sistema lineal
+        M[:n, :n] = B
+        M[:n, n:n+m] = J_x.T
+        M[n:n+m, :n] = J_x
+
+        # Lado derecho del sistema lineal
+        ld = np.concatenate((grad_x, h_x), 0)
+
+        # Solución del sistema lineal
+        w = np.linalg.solve(M, -ld)
+        d_x = w[:n]
+        d_y = w[n:n+m]
+
+        # Búsqueda de línea
+        alpha = 1.0
+        c = 1e-4
+        rho = 0.5
+        while fun(x + alpha * d_x) > fun(x) + c * alpha * np.dot(grad_x, d_x):
+            alpha *= rho
+
+        # Actualizaciones de x y y
+        x += alpha * d_x
+        y += alpha * d_y
+
+        # Recalcular gradiente y jacobiana
+        grad_x = gradiente(fun, x)
+        J_x = mi_jacobiana(h, x)
+        h_x = h(x)
+
+        # Actualización de la matriz B usando Powell
+        s = alpha * d_x
+        v = grad_x + np.dot(J_x.T, y) - cnpo1
+        # Actualización de Powell
+        rv = v - np.dot(B, s)
+        if np.dot(s, rv) > 0:
+            B += np.outer(rv, rv) / np.dot(s, rv)
+
+        # Reevaluar condiciones
+        cnpo1 = grad_x + np.dot(J_x.T, y)
+        cnpo = np.concatenate((cnpo1, h_x), 0)
+        cnpo_norma = np.linalg.norm(cnpo)
+        
+        print(f"Iteración {iter}: Norma CNPO = {cnpo_norma}")
+
+        if cnpo_norma <= tol:
+            break
+
+    return x, y
     
     
     
