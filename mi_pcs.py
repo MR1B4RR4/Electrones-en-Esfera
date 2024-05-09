@@ -201,8 +201,8 @@ def mi_pcs_local_2(fun, h, x):
           #-----------------------------------------------------------
           
 
-def line_search_wolfe(f, x, p, g, c1=1e-4, c2=0.9, max_line_search=100):
-    alpha = 0.5
+def line_search_wolfe(f, x, p, g, c1=1e-4, c2=0.9, max_line_search=50):
+    alpha = 0.01
     alpha_min, alpha_max = 0, np.inf
 
     for _ in range(max_line_search):
@@ -228,7 +228,7 @@ def line_search_wolfe(f, x, p, g, c1=1e-4, c2=0.9, max_line_search=100):
 
 def mi_pcs_local_3(fun, h, x):
     tol = 1e-5
-    maxiter = 100
+    maxiter = 50
     iter = 0
     n = len(x)
     h_x = h(x)
@@ -259,10 +259,10 @@ def mi_pcs_local_3(fun, h, x):
         d_y = w[n:n+m]
 
         # Búsqueda de línea con condiciones de Wolfe
-        alpha, ok = line_search_wolfe(fun, x, d_x, grad_x, c1=1e-2, c2=0.85)
+        alpha, ok = line_search_wolfe(fun, x, d_x, grad_x, c1=1e-4, c2=0.9)
         if not ok:
-            print("Búsqueda de línea fallida. Ajustando alfa manualmente.")
-            alpha = 0.001  # Ajuste manual si la búsqueda de línea falla
+            print("Búsqueda de línea fallida. Ajustando alfa manualmente. alpha anterior: ")
+            alpha = 10**-4 # Ajuste manual si la búsqueda de línea falla
 
         # Actualizaciones de x y y
         x += alpha * d_x
@@ -286,7 +286,7 @@ def mi_pcs_local_3(fun, h, x):
         cnpo = np.concatenate((cnpo1, h_x), 0)
         cnpo_norma = np.linalg.norm(cnpo)
         
-        print(f"Iteración {iter}: Norma CNPO = {cnpo_norma}")
+        print(f"Iteración {iter}: Norma CNPO = {cnpo_norma} Alfa: {alpha}")
 
         if cnpo_norma <= tol:
             break
