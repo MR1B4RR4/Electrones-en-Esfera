@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 from derivadas import gradiente, mi_jacobiana, matriz_rango1
-from mi_pcs import mi_pcs_local_2, mi_pcs_local_3  
+from pcs_global import mi_pcs_local_2, mi_pcs_local_3  
 
 def f_electron(x):
     num_points = 21  # Total de puntos incluyendo el anclado

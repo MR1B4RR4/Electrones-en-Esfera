@@ -25,8 +25,8 @@ def h(x):
 #--------------------------------------------
 
 import numpy as np
-from mi_pcs    import mi_pcs_local
-from mi_pcs    import mi_pcs_local_2
+from pcs_global    import mi_pcs_local
+from pcs_global    import mi_pcs_local_2
 x0 = np.random.rand(3)
 
 (x,y)=mi_pcs_local(f, h, x0)
