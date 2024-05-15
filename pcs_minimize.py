@@ -1,3 +1,6 @@
+# Sebastian Ibarra Del Corral 193992
+# Sandra Reyes Benavides 179149
+
 import numpy as np
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt

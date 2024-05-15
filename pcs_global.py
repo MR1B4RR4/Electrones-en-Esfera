@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Apr 10 11:41:15 2024
+# Sebastian Ibarra Del Corral 193992
+# Sandra Reyes Benavides 179149
 
-@author: Zeferino Parada García
-         Optimización Numérica
-         ITAM
-"""
 import numpy as np
 from derivadas import gradiente
 from derivadas import mi_jacobiana
